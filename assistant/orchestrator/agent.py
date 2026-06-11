@@ -71,8 +71,12 @@ def _log_usage(model: str, totals: dict) -> None:
     )
 
 
-def run_turn(chat_id: int, user_text: str) -> str:
-    """Handle one user message end-to-end; return the assistant's final text."""
+def run_turn(chat_id: int, user_content: str | list) -> str:
+    """Handle one user message end-to-end; return the assistant's final text.
+
+    ``user_content`` is plain text (typed or transcribed voice) or a list of content
+    blocks (e.g. an image + optional caption).
+    """
     memory = ConversationMemory(chat_id, settings.data_dir)
 
     # Persisted history is plain {role, content:str}; load it as the base context.
@@ -81,17 +85,21 @@ def run_turn(chat_id: int, user_text: str) -> str:
     # hold tool_use/tool_result blocks and injected memory that we do NOT persist.
     working = [dict(m) for m in history]
 
-    # Tier 2 recall: inject facts relevant to THIS message as ephemeral context.
-    # It goes into `working` only (never `history`), so the rolling conversation
-    # file stays clean and the injected note doesn't compound over turns.
-    note = _recall_note(chat_id, user_text)
-    if note:
-        working.append({"role": "user", "content": [
-            {"type": "text", "text": note},
-            {"type": "text", "text": user_text},
-        ]})
+    # Plain-text view of the input — used for Tier 2 recall and for what we persist.
+    # An image-only message has no text, so it falls back to a placeholder below.
+    user_text = user_content if isinstance(user_content, str) else " ".join(
+        b.get("text", "") for b in user_content if b.get("type") == "text"
+    ).strip()
+
+    # Tier 2 recall: inject relevant facts as ephemeral context (into `working` only,
+    # never `history`), prepended to the user content.
+    note = _recall_note(chat_id, user_text) if user_text else ""
+    note_block = [{"type": "text", "text": note}] if note else []
+    if isinstance(user_content, str):
+        body = [*note_block, {"type": "text", "text": user_content}] if note else user_content
     else:
-        working.append({"role": "user", "content": user_text})
+        body = [*note_block, *user_content]
+    working.append({"role": "user", "content": body})
 
     model = choose_model(user_text)
     totals = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
@@ -131,7 +139,7 @@ def run_turn(chat_id: int, user_text: str) -> str:
             final = "".join(b.text for b in resp.content if b.type == "text").strip() or "(no reply)"
             # Persist only the clean user->assistant pair; memory handles the rolling
             # window + summarization of older turns internally.
-            memory.record(user_text, final)
+            memory.record(user_text or "[image]", final)
             _log_usage(model, totals)
             return final
 

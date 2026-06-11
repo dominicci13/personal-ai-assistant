@@ -19,8 +19,9 @@ system (identity, pgvector RAG, summarized history), built from primitives
   (threaded) or new emails into your Drafts. **No send capability** — you review and send.
 - **Phase 4 done — Web research:** search + fetch the web (Anthropic's server-side tools, with
   citations); returns ranked options with links and stops there — no action taken.
+- **Rich input:** talk to it (voice notes → Whisper transcription) or send it a photo (Sonnet vision).
 - **Tools (12):** datetime · calendar (read/create/move/delete) · email (summarize/read/draft
-  reply/draft new) · web (search/fetch) · remember.
+  reply/draft new) · web (search/fetch) · remember. Input: text, voice, image.
 
 ## Architecture
 
