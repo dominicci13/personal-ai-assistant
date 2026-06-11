@@ -1,0 +1,6 @@
+anthropic>=0.39
+requests>=2.31
+python-dotenv>=1.0
+psycopg[binary]>=3.2   # Postgres driver (binary extra = no local libpq build needed)
+pgvector>=0.3.6        # registers the pgvector type so Python lists <-> vector columns "just work"
+openai>=1.0            # embeddings only (text-embedding-3-small); Claude stays the brain

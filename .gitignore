@@ -1,0 +1,22 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+data/*
+!data/IDENTITY.example.md
+*.db
+._*
+.DS_Store
+
+# Claude Code artifacts (per personal convention)
+CLAUDE.md
+.claude/
+tasks/
+docs/KICKOFF-PROMPTS.md
+
+# Local agent/vector DB artifacts
+*.rvf
+*.rvf.lock
+ruvector.db
+
+MEMORY.md

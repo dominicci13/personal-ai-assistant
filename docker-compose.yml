@@ -1,0 +1,29 @@
+# Local Postgres + pgvector for the assistant's Tier 2 (learned-facts) memory.
+# Bring up:   docker compose up -d
+# Status:     docker compose ps
+# Shell in:   docker exec -it paa-postgres psql -U assistant -d assistant
+# Tear down:  docker compose down        (add -v to also delete the data volume)
+#
+# The password is read from the .env file in this folder (the same .env the app uses).
+# docker compose auto-loads .env, so POSTGRES_PASSWORD below is filled from there.
+services:
+  db:
+    image: pgvector/pgvector:pg16        # official Postgres 16 image with pgvector preinstalled
+    container_name: paa-postgres
+    environment:
+      POSTGRES_USER: assistant
+      POSTGRES_DB: assistant
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}   # default localdev if .env not set
+    ports:
+      - "5432:5432"                      # expose to the host so the Python app can connect
+    volumes:
+      - paa_pgdata:/var/lib/postgresql/data   # named volume = data survives `down`, lives on Docker's disk (not the SMB share)
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U assistant -d assistant"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  paa_pgdata:
