@@ -33,6 +33,8 @@ class Settings:
 
 # Default the connection string from the docker-compose creds so there's nothing
 # extra to set locally. Override DATABASE_URL in .env for a remote/VPS Postgres later.
+# SECURITY: the 'localdev' fallback password is for LOCAL use only (Postgres bound to
+# localhost). Set a real POSTGRES_PASSWORD before exposing the database to any network.
 _DEFAULT_DB_URL = (
     f"postgresql://assistant:{os.getenv('POSTGRES_PASSWORD', 'localdev')}"
     "@localhost:5432/assistant"
