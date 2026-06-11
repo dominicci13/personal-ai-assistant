@@ -14,6 +14,12 @@ from assistant.tools.calendar import (
     list_calendar_events,
     update_calendar_event,
 )
+from assistant.tools.email import (
+    draft_email_reply,
+    draft_new_email,
+    list_unread_emails,
+    read_email,
+)
 from assistant.tools.remember import remember
 
 TOOLS = [
@@ -107,6 +113,60 @@ TOOLS = [
         },
     },
     {
+        "name": "list_unread_emails",
+        "description": "List Brian's recent unread Gmail (sender, subject, snippet). Use to "
+                       "summarize his inbox or to find an email to read or reply to.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "max_results": {"type": "integer", "description": "How many to return (default 10)."},
+            },
+            "required": [],
+        },
+    },
+    {
+        "name": "read_email",
+        "description": "Read the full body of one unread email, found by a sender or subject "
+                       "keyword. Use before drafting a reply when you need full context. "
+                       "Returns needs_disambiguation if several unread emails match.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "Sender or subject keyword, e.g. 'Indeed' or 'invoice'."},
+            },
+            "required": ["query"],
+        },
+    },
+    {
+        "name": "draft_email_reply",
+        "description": "Draft a reply to an unread email (found by sender/subject keyword), in "
+                       "Brian's voice. The draft is SAVED TO HIS GMAIL DRAFTS and is NEVER "
+                       "sent — Brian reviews and sends it himself. Write a complete, tone-matched "
+                       "reply, then tell him it's in his Drafts to review.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "Sender or subject keyword identifying the email."},
+                "body": {"type": "string", "description": "The full reply text, in Brian's voice."},
+            },
+            "required": ["query", "body"],
+        },
+    },
+    {
+        "name": "draft_new_email",
+        "description": "Draft a NEW email (saved to Brian's Gmail Drafts, never sent). Write it "
+                       "in Brian's voice, then tell him it's in Drafts to review and send.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "to": {"type": "string", "description": "Recipient email address."},
+                "subject": {"type": "string", "description": "Subject line."},
+                "body": {"type": "string", "description": "The full email text, in Brian's voice."},
+            },
+            "required": ["to", "subject", "body"],
+        },
+    },
+    {
         "name": "remember",
         "description": (
             "Save a durable fact or preference about the user to long-term memory "
@@ -168,4 +228,12 @@ def dispatch_tool(name: str, tool_input: dict, chat_id: int) -> dict:
             tool_input["title_query"], tool_input.get("start"), tool_input.get("end"),
             tool_input.get("summary"), tool_input.get("time_min"), tool_input.get("time_max"),
         )
+    if name == "list_unread_emails":
+        return list_unread_emails(tool_input.get("max_results", 10))
+    if name == "read_email":
+        return read_email(tool_input["query"])
+    if name == "draft_email_reply":
+        return draft_email_reply(tool_input["query"], tool_input["body"])
+    if name == "draft_new_email":
+        return draft_new_email(tool_input["to"], tool_input["subject"], tool_input["body"])
     return {"error": f"unknown tool: {name}"}

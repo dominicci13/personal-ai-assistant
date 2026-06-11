@@ -7,7 +7,7 @@ revoked or deleted.
 Usage:  python run_google_auth.py
 """
 from assistant.config import settings
-from assistant.integrations.google_calendar import authorize
+from assistant.integrations.google_auth import authorize
 
 
 def main() -> None:

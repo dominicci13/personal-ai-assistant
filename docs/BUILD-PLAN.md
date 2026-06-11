@@ -1,11 +1,11 @@
 # Build Plan — Track A (custom personal assistant)
 
 **Last updated:** 2026-06-10
-**Where we are:** Phases 1 & 2 DONE. Phase 1 = 3-tier memory + remember() + caching + routing +
-consolidation. Phase 2 = Google Calendar read/create/reschedule/delete (confirm-first, title-based
-write tools, Sonnet-default routing); DoD verified live in Fantastical. Setup + map in `MEMORY.md`.
+**Where we are:** Phases 1-3 DONE. Phase 1 = 3-tier memory. Phase 2 = Google Calendar
+(read/create/reschedule/delete, confirm-first). Phase 3 = Gmail draft-only (summarize unread, draft
+replies/new emails into Drafts; no send). Setup + codebase map in `MEMORY.md`.
 
-**Next up:** Phase 3 — Email (draft-only) across Gmail/Outlook/iCloud.
+**Next up:** Phase 4 — Web research.
 
 ---
 
@@ -69,11 +69,11 @@ remember(content: str, kind: "preference" | "fact")
 - Read + create events; verify they show in Fantastical. iCloud via CalDAV (fallback Google Tasks).
 - **Done:** "what's on my calendar tomorrow", "block 3-4pm for X" work and show in Fantastical.
 
-### Phase 3 — Email (draft-only) across Gmail + Outlook + iCloud  ← START HERE
+### Phase 3 — Email (draft-only) across Gmail + Outlook + iCloud  ✅ DONE (Gmail; Outlook/iCloud later)
 - Read/summarize unread; draft tone-matched replies; **draft-and-confirm** send flow.
 - **Done:** "summarize my unread", "draft a reply to X in my tone" → Brian approves before send.
 
-### Phase 4 — Web research
+### Phase 4 — Web research  ← START HERE
 - Search + fetch + compare; return ranked options with links. Stops at "here are the options."
 
 ### Phase 4.5 — Deploy (always-on)
