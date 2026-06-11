@@ -4,8 +4,9 @@ A single-tenant personal assistant I talk to over Telegram. Claude is the brain;
 a custom Python tool-use loop is the orchestrator. Built local-first, structured
 to deploy to a VPS later without rewrites.
 
-This repo doubles as a portfolio piece: agent-with-tools design + (soon) RAG
-memory, built from primitives (no LangChain), with a swappable channel/tool model.
+This repo doubles as a portfolio piece: agent-with-tools design + a 3-tier memory
+system (identity, pgvector RAG, summarized history), built from primitives
+(no LangChain), with a swappable channel/tool model.
 
 ## Status
 
@@ -66,4 +67,4 @@ Message your bot on Telegram. Only the `ALLOWED_TELEGRAM_USER_ID` can use it.
 | `data/` | Runtime state, incl. `IDENTITY.md` (gitignored) |
 
 ## Author
-Built by **Brian Ramirez** ([@dominicci13](https://github.com/dominicci13)) — automation & AI workflow specialist. More on my [GitHub profile](https://github.com/dominicci13) and [LinkedIn](https://linkedin.com/in/bdramirez).
+Built by **Brian Ramírez** ([@dominicci13](https://github.com/dominicci13)) — automation & AI workflow specialist. More on my [GitHub profile](https://github.com/dominicci13) and [LinkedIn](https://linkedin.com/in/bdramirez).
