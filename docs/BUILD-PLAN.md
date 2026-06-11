@@ -1,12 +1,11 @@
 # Build Plan — Track A (custom personal assistant)
 
 **Last updated:** 2026-06-10
-**Where we are:** Phase 1 DONE — 3-tier memory (identity / pgvector facts / conversation
-summary) + `remember()` tool + prompt caching + Haiku/Sonnet routing + token logging +
-consolidation. Definition-of-done verified. Runs locally; needs Docker Postgres + OpenAI key.
-Setup + codebase map in `MEMORY.md`.
+**Where we are:** Phases 1 & 2 DONE. Phase 1 = 3-tier memory + remember() + caching + routing +
+consolidation. Phase 2 = Google Calendar read/create/reschedule/delete (confirm-first, title-based
+write tools, Sonnet-default routing); DoD verified live in Fantastical. Setup + map in `MEMORY.md`.
 
-**Next up:** Phase 2 — Calendar tools (Google/Outlook/iCloud).
+**Next up:** Phase 3 — Email (draft-only) across Gmail/Outlook/iCloud.
 
 ---
 
@@ -66,11 +65,11 @@ remember(content: str, kind: "preference" | "fact")
 - **Definition of done:** "remember I prefer X" persists; later, an unrelated chat correctly
   recalls X via retrieval; identity is present from message one; token/turn is logged.
 
-### Phase 2 — Calendar tools (Google + Outlook + iCloud)  ← START HERE
+### Phase 2 — Calendar tools (Google + Outlook + iCloud)  ✅ DONE (Google; Outlook/iCloud later)
 - Read + create events; verify they show in Fantastical. iCloud via CalDAV (fallback Google Tasks).
 - **Done:** "what's on my calendar tomorrow", "block 3-4pm for X" work and show in Fantastical.
 
-### Phase 3 — Email (draft-only) across Gmail + Outlook + iCloud
+### Phase 3 — Email (draft-only) across Gmail + Outlook + iCloud  ← START HERE
 - Read/summarize unread; draft tone-matched replies; **draft-and-confirm** send flow.
 - **Done:** "summarize my unread", "draft a reply to X in my tone" → Brian approves before send.
 

@@ -4,3 +4,7 @@ python-dotenv>=1.0
 psycopg[binary]>=3.2   # Postgres driver (binary extra = no local libpq build needed)
 pgvector>=0.3.6        # registers the pgvector type so Python lists <-> vector columns "just work"
 openai>=1.0            # embeddings only (text-embedding-3-small); Claude stays the brain
+google-api-python-client>=2.0   # Google Calendar API
+google-auth-oauthlib>=1.0       # one-time browser OAuth consent flow
+google-auth-httplib2>=0.2       # auth transport for the API client
+pytest>=8.0            # dev: test suite (python -m pytest)
