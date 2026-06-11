@@ -1,6 +1,7 @@
 .env
 __pycache__/
 *.pyc
+*.egg-info/
 .venv/
 data/*
 !data/IDENTITY.example.md
