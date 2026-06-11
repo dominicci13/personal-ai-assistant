@@ -99,7 +99,7 @@ def run_turn(chat_id: int, user_text: str) -> str:
     while True:
         resp = _client.messages.create(
             model=model,
-            max_tokens=1024,
+            max_tokens=2048,  # room for multi-option research answers with links
             # cache_control marks the stable prefix (tools render first, then this
             # system block) so repeated turns bill it at ~10%. Measured: caching
             # engages above ~2048 tokens (Sonnet 4.6's minimum) — at ~4.5k tokens it
@@ -121,6 +121,11 @@ def run_turn(chat_id: int, user_text: str) -> str:
         totals["cache_read"] += getattr(u, "cache_read_input_tokens", 0) or 0
         totals["cache_write"] += getattr(u, "cache_creation_input_tokens", 0) or 0
         working.append({"role": "assistant", "content": resp.content})
+
+        # Server-side web tools can pause when their search/fetch loop hits its limit;
+        # re-send (the trailing server_tool_use block tells the API to resume).
+        if resp.stop_reason == "pause_turn":
+            continue
 
         if resp.stop_reason != "tool_use":
             final = "".join(b.text for b in resp.content if b.type == "text").strip() or "(no reply)"

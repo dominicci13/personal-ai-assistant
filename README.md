@@ -17,9 +17,10 @@ system (identity, pgvector RAG, summarized history), built from primitives
   write tools resolve events by title, no id juggling). Verified in Fantastical.
 - **Phase 3 done — Gmail (draft-only):** summarize unread, read, and draft tone-matched replies
   (threaded) or new emails into your Drafts. **No send capability** — you review and send.
-- **Tools (10):** datetime · calendar (read/create/move/delete) · email (summarize/read/draft
-  reply/draft new) · remember.
-- **Next:** Web research, then VPS deploy.
+- **Phase 4 done — Web research:** search + fetch the web (Anthropic's server-side tools, with
+  citations); returns ranked options with links and stops there — no action taken.
+- **Tools (12):** datetime · calendar (read/create/move/delete) · email (summarize/read/draft
+  reply/draft new) · web (search/fetch) · remember.
 
 ## Architecture
 
