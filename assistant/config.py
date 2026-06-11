@@ -4,9 +4,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()  # reads .env in the repo root if present
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# Explicit path instead of bare load_dotenv(): the default search is CWD-dependent
+# in some invocation modes (python -c, REPL), so pin it to the repo's .env.
+load_dotenv(REPO_ROOT / ".env")
 
 
 def _require(name: str) -> str:
