@@ -26,6 +26,9 @@ class Settings:
     data_dir: Path
     database_url: str
     openai_api_key: str  # embeddings only; optional so the Phase 0 bot still runs without it
+    calendar_timezone: str       # IANA tz used to interpret/display calendar times
+    google_credentials_path: Path  # OAuth client downloaded from Google Cloud (gitignored)
+    google_token_path: Path        # refresh token written by run_google_auth.py (gitignored)
 
 
 # Default the connection string from the docker-compose creds so there's nothing
@@ -45,4 +48,7 @@ settings = Settings(
     data_dir=REPO_ROOT / "data",
     database_url=os.getenv("DATABASE_URL", _DEFAULT_DB_URL),
     openai_api_key=os.getenv("OPENAI_API_KEY", ""),  # blank is OK until embeddings are used
+    calendar_timezone=os.getenv("CALENDAR_TIMEZONE", "America/Santo_Domingo"),
+    google_credentials_path=REPO_ROOT / "config" / "credentials.json",
+    google_token_path=REPO_ROOT / "config" / "token.json",
 )

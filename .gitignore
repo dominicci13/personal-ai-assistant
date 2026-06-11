@@ -14,6 +14,10 @@ CLAUDE.md
 tasks/
 docs/KICKOFF-PROMPTS.md
 
+# Google OAuth — downloaded client + generated token; never commit
+config/*.json
+!config/*.json.example
+
 # Local agent/vector DB artifacts
 *.rvf
 *.rvf.lock

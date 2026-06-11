@@ -1,5 +1,7 @@
 """The brain: a Claude tool-use loop. This is the durable core of the product."""
 import json
+import re
+
 from anthropic import Anthropic
 
 from assistant.config import settings
@@ -38,21 +40,26 @@ def _recall_note(chat_id: int, query: str) -> str:
     return "Relevant things you've saved about Brian (use if helpful, ignore if not):\n" + lines
 
 
-# Keywords that warrant the stronger model even in a short message.
-_REASONING_HINTS = ("why", "how", "explain", "compare", "plan", "draft", "analyze", "write")
+# Haiku is only safe for trivial pleasantries that never trigger a tool. Everything
+# else — actions, questions, confirmations, follow-ups — goes to Sonnet, because
+# calendar/memory tool use and date reasoning are exactly where the small model
+# hallucinates (claims "Done" without calling the tool; botches weekday math).
+_TRIVIAL = re.compile(
+    r"^(hi|hey|hello|thanks|thank you|cool|nice|great|perfect|awesome|got it|np)\b",
+    re.IGNORECASE,
+)
 
 
 def choose_model(user_text: str) -> str:
-    """Pick the model for this turn: cheap Haiku for short/simple messages, Sonnet
-    for longer or reasoning-heavy ones.
+    """Pick the model: Haiku only for short pure pleasantries, Sonnet for the rest.
 
-    Deliberately a simple heuristic (length + a few keywords). A learned classifier
-    would route better and is the natural future upgrade.
+    Biased toward Sonnet on purpose — for a personal assistant, correct tool use
+    beats the small token savings of routing real requests to the weaker model.
     """
-    looks_complex = len(user_text.split()) > 12 or any(
-        kw in user_text.lower() for kw in _REASONING_HINTS
-    )
-    return settings.model_reasoning if looks_complex else settings.model_routing
+    text = user_text.strip()
+    if len(text.split()) <= 4 and "?" not in text and _TRIVIAL.match(text):
+        return settings.model_routing   # Haiku — small talk only
+    return settings.model_reasoning      # Sonnet — anything that may need tools/reasoning
 
 
 def _log_usage(model: str, totals: dict) -> None:
