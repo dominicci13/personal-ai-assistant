@@ -21,6 +21,12 @@ _client = Anthropic(api_key=settings.anthropic_api_key)
 RECALL_K = 3
 RECALL_MAX_DISTANCE = 0.85
 
+# Tools whose results carry third-party content (not Brian's words). Their output is
+# wrapped in <untrusted-external-content> tags before re-entering the context, as a
+# structural prompt-injection signal alongside the persona rule. (web_search/web_fetch
+# are Anthropic server-side tools — their results never pass through this loop.)
+_UNTRUSTED_TOOLS = {"read_email", "list_unread_emails"}
+
 
 def _recall_note(chat_id: int, query: str) -> str:
     """Build an injectable note of Tier 2 facts relevant to ``query`` (or '').
@@ -148,9 +154,18 @@ def run_turn(chat_id: int, user_content: str | list) -> str:
         for block in resp.content:
             if block.type == "tool_use":
                 output = dispatch_tool(block.name, block.input, chat_id)
+                content = json.dumps(output, ensure_ascii=False)
+                # Structurally isolate third-party content (email bodies/snippets) so the
+                # model gets a non-semantic signal that it's untrusted data — defense in
+                # depth against prompt injection, alongside the persona rule.
+                if block.name in _UNTRUSTED_TOOLS:
+                    content = (
+                        "<untrusted-external-content>\n"
+                        f"{content}\n</untrusted-external-content>"
+                    )
                 results.append({
                     "type": "tool_result",
                     "tool_use_id": block.id,
-                    "content": json.dumps(output, ensure_ascii=False),
+                    "content": content,
                 })
         working.append({"role": "user", "content": results})

@@ -20,6 +20,19 @@ SCOPES = [
 ]
 
 
+def _save_token(creds: Credentials) -> None:
+    """Write the token, then best-effort restrict its permissions to the owner.
+
+    The token holds a long-lived refresh token, so keep it owner-readable only.
+    (chmod is a no-op on filesystems that ignore Unix permissions, e.g. SMB mounts.)
+    """
+    settings.google_token_path.write_text(creds.to_json(), encoding="utf-8")
+    try:
+        settings.google_token_path.chmod(0o600)
+    except OSError:
+        pass
+
+
 def authorize() -> None:
     """Run the one-time browser consent flow and save the token with all SCOPES.
 
@@ -39,7 +52,7 @@ def authorize() -> None:
         str(settings.google_credentials_path), SCOPES
     )
     creds = flow.run_local_server(port=0)
-    settings.google_token_path.write_text(creds.to_json(), encoding="utf-8")
+    _save_token(creds)
 
 
 def get_credentials() -> Credentials:
@@ -51,5 +64,5 @@ def get_credentials() -> Credentials:
     creds = Credentials.from_authorized_user_file(str(settings.google_token_path), SCOPES)
     if not creds.valid and creds.expired and creds.refresh_token:
         creds.refresh(Request())
-        settings.google_token_path.write_text(creds.to_json(), encoding="utf-8")
+        _save_token(creds)
     return creds

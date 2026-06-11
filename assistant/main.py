@@ -54,7 +54,8 @@ def main():
                     continue
                 reply = run_turn(msg.chat_id, content)
             except Exception as exc:  # never let one bad turn kill the loop
-                reply = f"Error handling that: {exc}"
+                print(f"[error] chat {msg.chat_id}: {exc!r}")  # detail to operator console only
+                reply = "Sorry, something went wrong handling that. Mind trying again?"
             channel.send_message(msg.chat_id, reply)
 
 
