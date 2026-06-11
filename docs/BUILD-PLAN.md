@@ -1,11 +1,10 @@
 # Build Plan — Track A (custom personal assistant)
 
 **Last updated:** 2026-06-10
-**Where we are:** Phases 1-3 DONE. Phase 1 = 3-tier memory. Phase 2 = Google Calendar
-(read/create/reschedule/delete, confirm-first). Phase 3 = Gmail draft-only (summarize unread, draft
-replies/new emails into Drafts; no send). Setup + codebase map in `MEMORY.md`.
+**Where we are:** Phases 1-4 DONE (3-tier memory · Google Calendar · Gmail draft-only · web research).
+This repo stays LOCAL / portfolio — NO VPS deploy here (OpenClaw is the deploy target). Map in `MEMORY.md`.
 
-**Next up:** Phase 4 — Web research.
+**Next up:** Polish — image input, voice input (Whisper), Outlook + iCloud calendar & email.
 
 ---
 
@@ -73,10 +72,10 @@ remember(content: str, kind: "preference" | "fact")
 - Read/summarize unread; draft tone-matched replies; **draft-and-confirm** send flow.
 - **Done:** "summarize my unread", "draft a reply to X in my tone" → Brian approves before send.
 
-### Phase 4 — Web research  ← START HERE
+### Phase 4 — Web research  ✅ DONE
 - Search + fetch + compare; return ranked options with links. Stops at "here are the options."
 
-### Phase 4.5 — Deploy (always-on)
+### Phase 4.5 — Deploy (always-on)  ⏭️ SKIPPED for this repo (stays local/portfolio; OpenClaw is the deploy target)
 - Move from local polling to the VPS (Hetzner) per the original BUILD-PLAN; add the webhook
   channel, restart resilience, Postgres backups. This restores "always-on/proactive."
 
