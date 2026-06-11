@@ -15,9 +15,11 @@ system (identity, pgvector RAG, summarized history), built from primitives
   prompt caching, Haiku/Sonnet routing, per-turn token logging, and a memory-consolidation pass.
 - **Phase 2 done — Google Calendar:** read, create, reschedule, and delete events (confirm-first;
   write tools resolve events by title, no id juggling). Verified in Fantastical.
-- **Tools:** `get_current_datetime`, `list_calendar_events`, `create_calendar_event`,
-  `update_calendar_event`, `delete_calendar_event`, `remember`.
-- **Next:** Email (draft-only), web research, then VPS deploy.
+- **Phase 3 done — Gmail (draft-only):** summarize unread, read, and draft tone-matched replies
+  (threaded) or new emails into your Drafts. **No send capability** — you review and send.
+- **Tools (10):** datetime · calendar (read/create/move/delete) · email (summarize/read/draft
+  reply/draft new) · remember.
+- **Next:** Web research, then VPS deploy.
 
 ## Architecture
 
@@ -28,7 +30,7 @@ Telegram (long-poll)  ->  TelegramChannel (swappable adapter)
                       Orchestrator / agent loop (Claude + tools)
                               |  load memory -> call Claude -> run tools -> repeat -> reply
                               v
-                      Tools: datetime | calendar (read/create/move/delete) | remember | ...later: email, web
+                      Tools: datetime | calendar (read/create/move/delete) | email (draft-only) | remember | ...later: web
 
 Memory tiers: 1) identity (system prompt)  2) facts (pgvector RAG, retrieved top-k)
               3) conversation (recent turns verbatim + summarized tail)
@@ -47,7 +49,7 @@ pip install -r requirements.txt
 cp .env.example .env                  # fill in the secrets (Anthropic, OpenAI, Telegram)
 docker compose up -d                  # Postgres + pgvector for Tier 2 memory
 python -m assistant.orchestrator.db   # one-time: create the facts table
-python run_google_auth.py             # one-time: Google Calendar consent (needs config/credentials.json)
+python run_google_auth.py             # one-time: Google Calendar + Gmail consent (needs config/credentials.json)
 python -m assistant.main
 ```
 
@@ -67,9 +69,11 @@ For Google Calendar setup (Cloud project + OAuth client), see the Phase 2 notes.
 | `assistant/orchestrator/db.py` | Postgres + pgvector connection + schema |
 | `assistant/orchestrator/memory.py` | Tier 3 — conversation window + running summary |
 | `assistant/orchestrator/persona.py` | Base behavioral system prompt |
-| `assistant/integrations/google_calendar.py` | Google Calendar OAuth + read/create/update/delete |
-| `assistant/tools/` | Tool catalog + implementations (calendar, `remember`, datetime) |
-| `run_google_auth.py` | One-time Google Calendar OAuth consent |
+| `assistant/integrations/google_auth.py` | Shared Google OAuth (Calendar + Gmail scopes) |
+| `assistant/integrations/google_calendar.py` | Calendar read/create/update/delete |
+| `assistant/integrations/gmail.py` | Gmail read + draft (reply/new); no send |
+| `assistant/tools/` | Tool catalog + implementations (calendar, email, `remember`, datetime) |
+| `run_google_auth.py` | One-time Google OAuth consent (Calendar + Gmail) |
 | `docker-compose.yml` | Local Postgres + pgvector |
 | `config/`, `data/` | OAuth client/token and runtime state (gitignored) |
 
