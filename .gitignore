@@ -23,5 +23,6 @@ config/*.json
 *.rvf
 *.rvf.lock
 ruvector.db
+.claude-flow/
 
 MEMORY.md
