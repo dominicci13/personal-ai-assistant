@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
     for fact in [
         "Brian goes to the gym every day at 6pm.",
-        "Brian is relocating from Santo Domingo to Spain.",
+        "Brian is relocating to a new apartment near the park.",
         "Brian's favorite programming language is Python.",
         "Brian prefers tabs over spaces when writing code.",
     ]:
